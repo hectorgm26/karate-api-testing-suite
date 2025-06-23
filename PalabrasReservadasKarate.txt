@@ -1,0 +1,238 @@
+
+Cuando se ejecuta un feature con un tag a nivel de feature, se ejecutaran todos los escenarios que tengan ese tag, y se ignoraran los escenarios que no tengan ese tag. Esto permite ejecutar un subconjunto de pruebas de manera selectiva.
+
+@tag_features
+Feature: Define una funcionalidad de un programa o sistema a probar
+
+  @Tag: palabra que permite agrupar escenarios relacionados, facilitando su ejecucion y organizacion. PUEDEN TENER VARIOS TAGS. INCLUSO SE PUEDEN COMPARTIR TAGS ENTRE FEATURES DE DIFERENTES ARCHIVOS
+  Scenario: Define un caso de prueba
+    Given: define un paso inicial que se ejecutara antes de cualquier otro paso
+    When: define una accion o evento que se va a probar
+    Then: define una verificacion o resultado esperado de la accion realizada
+
+Tambien existe And, que se utiliza para agregar pasos adicionales a un escenario, y But, que se utiliza para definir una condicion que debe cumplirse antes de realizar una accion.
+
+
+Palabras reservadas mas utilizadas en Karate Framework:
+
+- url: define la url base para las solicitudes HTTP en un archivo de Karate. Esa url sera valida solo en un escenario, salvo que se determina global por medio de un background
+- method: especifica el metodo HTTP a utilizar en una solicitud, como GET, POST, PUT, DELETE, etc.
+- params: permite agregar parametros de consula a una solicitud HTTP. Estos parametros se envian como parte de la URL.
+- headers: define los encabezados HTTP para una solicitud. Los encabezados son pares clave-valor que se envian con la solicitud para proporcionar informacion adicional al servidor.
+- request: se utiliza para enviar datos en el cuerpo de una solicitud HTTP. Esto es especialmente util en solicitudes POST o PUT, donde se envian datos al servidor.
+
+- response: permite realizar validaciones sobre la respuesta, despues de realizar una solicitud HTTP. Se utiliza para verificar el contenido, el estado y otros aspectos de la respuesta del servidor.
+- status: se utiliza para verificar el codigo de estado HTTP de la respuesta. Permite validar si la solicitud fue exitosa (por ejemplo, 200 OK) o si hubo un error (por ejemplo, 404 Not Found).
+- match: se utiliza para realizar comparaciones detalladas entre valores esperados y valores reales en la respuesta. Permite validar que los datos devueltos por el servidor coincidan con lo esperado.
+- retry: permite repetir una solicitud hasta que se cumpla una condicion especificada
+
+- background: define pasos comunes que se ejecutaran antes de cada escenario en un archivo de funcion especifico. Este background se ejecutara antes del primer paso de cada escenario que exista en el archivo.
+- call: permite llamar a otro archivo de karate dentro de un escenario para reutilizar casos de prueba
+- cookie: permite agregar, eliminar y obtener cookies en las solicitudes HTTP.
+- def: define variables locales dentro de un escenario.
+- delay: agrega un retraso especifico antes de ejecutar el siguiente paso en un escenario.
+- eval: permite evaluar expresiones JavaScript dentro de un escenario de Karate.
+
+PALABRA DE ENTRADA A OTRAS FUNCIONES
+- karate: proporciona funciones y utilidades adicionales para realizar acciones especificas dentro de los escenarios de prueba, como la generacion de numeros aleatorios, la obtencion de la fecha actual, entre otros.
+
+- karate.callSingle: llama a otro archivo de Karate y espera a que se complete la ejecucion antes de continuar.
+- karate.configure: permite configurar opciones y comportamientos globales para el motor de Karate.
+- karate.embed: permite adjuntar datos binarios (por ejemplo, imagenes) a los informes de karate.
+- karate.env: proporciona acceso a las variables de entorno definidas para el entorno de ejecucion actual de karate.
+- karate.feature: permite ejecutar otro archivo de karate como una caracteristica independiente dentro de un escenario, es decir, se puede ejecutar un archivo de caracteristica como si fuera un escenario independiente.
+- karate.info: proporciona informacion sobre la ejecucion actual de karate, como la ruta del archivo actual.
+- karate.match: realiza comparaciones detalladas entre valores esperados y valores reales en la respuesta, permitiendo validar que los datos devueltos por el servidor coincidan con lo esperado.
+- karate.read: lee el contenido de un archivo y lo asigna a una variable, lo que permite cargar datos desde archivos externos para su uso en pruebas.
+- karate.retry: repite una solicitud hasta que se cumpla una condicion especificada, lo que es util para manejar situaciones en las que una solicitud puede fallar temporalmente.
+- karate.scenario: permite definiar un escenario en un archivo de karate, similar a karate.feature, pero mas ligera, ya que permite definiar un escenario, y no el feature completo
+
+
+A CONSIDERAR
+
+Las palabras o metodos reservados de Karate deben ser invocados en un orden logico segun la prueba que estemos realizando.
+Debemos respetar la estructura de las palabras, respetando mayusculas y minusculas, ya que Karate es sensible a las mayusculas y minusculas.
+Debemos respetar la identacion de los pasos, ya que Karate utiliza la indentacion para determinar la jerarquia de los pasos.
+Procurar reutilizar pasos ya definidos mediante metodos call o read o el uso intensivo de background
+
+
+Backgrounds:
+
+En los background, podemos remplazar la palabra reservada de karate, por un *, y asi no comprometiendonos con una palabra reservada de karate, y poder utilizarla en el escenario.
+Los background permiten realizar pasos comunes para todos los escenarios de un feature, como por ejemplo definir la url base, los headers, los parametros de consulta, etc.
+Como tambien configuraciones especificando headers, cookies, etc.
+Y definir variables (con def = )que se utilizaran en los escenarios, como por ejemplo, un token de autenticacion, o una url base, o un body request que se utilizara en varios escenarios.
+
+  Background:
+    * headers {'x-api-key' : 'reqres-free-v1'}
+    Given url "https://reqres.in/api/users/"
+    * url "https://reqres.in/api/users/"
+
+
+METODO GET
+
+PODEMOS REUTILIZAR LA URL DEL GIVEN EN CADA SCENARIO, mediante el path, que permite concatenar y agregar un elemento a un path a la url definida en el background, y asi no tener que repetir la url en cada escenario.
+En este caso, la url es "https://reqres.in/api/users/"
+y se agrega lo del path despues de la palabra users, en este caso, el numero 2
+(NO ES NECESARIO PONER EL /, ya que karate lo agrega automaticamente). Y lo que se agrega en path, SIEMPRE IRA DESPUES DE LO ULTIMO DE LA URL
+
+    Given o AND path "2"
+    When method get
+    Then status 200
+
+
+EN KARATE, LO QUE SE RECIBE DE UN METODO SE GUARDA EN UNA VARIABLE LLAMADA response, y se puede acceder a los datos de la respuesta mediante la palabra reservada response, y el nombre del campo que se quiere acceder, por ejemplo, si se quiere acceder al campo data de la respuesta, se puede hacer de la siguiente manera:
+    * def data = response.data
+    * def firstName = data[0].first_name
+    * def lastName = data[0].last_name
+
+o con un match response, que permite validar el contenido de la respuesta, por ejemplo:
+    * match response.data[0].first_name == "George"
+    * match response.data[0].last_name == "Bluth"
+
+Tambien se puede usar un response contains, al cual se le pasara la data como json
+
+
+Y ADEMAS, EXISTE EL param. En Karate, param (abreviación de parameter) se usa para agregar parámetros de consulta (query parameters) a la URL,
+es decir, los que van después del signo ? en una petición GET.
+
+Ejemplo:
+Given url "https://reqres.in/api"
+And path "users"
+And param page = 2
+
+La URL final que Karate construye es:
+https://reqres.in/api/users?page=2
+
+También puedes usar params (plural)
+Si tienes varios parámetros de golpe, puedes usar:
+
+And params { page: 2, per_page: 6 } YA NO USANDO =, sino utilizando : que es la sintaxis de JSON
+
+
+SIEMPRE HAY QUE FIJARNOS EN LA RESPUESTA DEL ENDPOINT PARA VER SI HAY UN NODO QUE CONTENGA LA INFORMACION QUE QUEREMOS VALIDAR, Y SI NO LO HAY, PODEMOS HACER UN MATCH DIRECTO A LA RESPUESTA COMPLETA
+EN EL CASO QUE LO HUBIERA, SE HACE UN RESPONSE.NOMBREDELNODO, y desde alli se puede acceder a los datos que se necesiten validar
+
+TAMBIEN PODEMOS VALIDAR EL TIPO DE DATO DE UN CAMPO ESPECIFICO:
+EJEMPLO:
+Then match response.data contains {id: "#number", email:"#string"}
+Para estos casos, se elimina las comillas y el valor del campo, y se deja el tipo de dato que se espera,
+como #number, #string, #boolean, etc.
+
+Un body requeste en un get es inutil, ya que no se envian datos en el cuerpo de la solicitud, sino que se envian en la URL como parametros de consulta.
+En cambio en un POST, PUT o DELETE, si se envian datos en el cuerpo de la solicitud, y se puede utilizar la palabra reservada request para enviar esos datos.
+
+
+METODO POST
+
+Se le puede pasar el body request en el mismo scenario como un json por medio de la palabra reservada request
+
+Scenario: Validar que al crear un usuario se recibe el codigo de respuesta 201
+    Given url "https://reqres.in/api/users"
+    And request {"name": "morpheus","job": "leader"}
+    When method post
+    Then match response.id == "#present"
+    Then status 201
+
+El "#present" permite validar si un dato existe en la respuesta, es decir, que el campo id no sea nulo o vacio, por medio de una expression booleana.
+
+PERO hay varias formas de hacer validaciones a metodos POST, sobretodo con request extensos
+
+- Pasar body request desde un background, para que todos los scenarios de un feature lo puedan utilizar:
+
+  Background:
+    * headers {'x-api-key' : 'reqres-free-v1'}
+    * def solicitud = {"name": "morpheus","job": "leader"}
+
+@test_post_7
+  Scenario: Validar que se permite crear un usuario con nombre HectorGonzalezM
+    Given url "https://reqres.in/api/users"
+    And solicitud['name'] = "HectorGonzalezM"
+    # Se puede tambien hacer como solicitud.name = "HectorGonzalezM". Recomendable en json extensos usar el punto .
+    # ESTOS CAMBIOS AL REQUEST SOLO SE APLICAN EN EL SCENARIO DONDE SE HACE EL CAMBIO, NO EN TODOS LOS SCENARIOS DEL FEATURE
+    And request solicitud
+    When method post
+    Then status 201
+
+- Pasar body requeste desde un archivo externo json - se usa el metodo read, y se le pasa la ruta del archivo json que contiene el body request:
+
+@test_post_8
+  Scenario: Validar que al crear un usuario se recibe el codigo de respuesta 201
+    Given url "https://reqres.in/api/users"
+    And def bodyRequest = read("../jsons/posts/create_user.json")
+    And request bodyRequest
+    When method post
+    Then status 201
+
+
+SCENARIOS OUTLINE: SON AQUELLOS QUE PERMITEN RE EJECUTAR UN ESCENARIO CON DIFERENTES DATOS DE ENTRADA, SIN TENER QUE REPETIR EL MISMO ESCENARIO VARIAS VECES.
+
+Scenario Outline:
+
+    Examples: seran las veces que se iterara y ejecutara el escenario en si mismo, con los diferentes datos que se le pasen en el ejemplo
+      | name            | job        |
+      | HectorGonzalezM | Programador|
+      | Yanira Fontalba | Gerente    |
+      | Juan Perez      | Analista   |
+
+Se usa un formato tabla tipo excel, en donde la primera fila contiene los nombres de las columnas, y las siguientes filas contienen los datos que se van a utilizar en el escenario.
+Luego en el body request, se utiliza el nombre de la columna entre <> para hacer referencia al dato que se va a utilizar en ese escenario.
+Y si no estuvieran en comillas los examples, se tendria que hacer referencia por "<name>" y "<job>", pero como estan en comillas, se puede hacer referencia directamente por <name> y <job>.
+
+
+LOS HEADERS SE PUEDEN PASAR DIRECTO EN EL SCENARIO, O DESDE UN ARCHIVO JSON, O EN UN BACKGROUND, O EN UN SCENARIO OUTLINE
+
+
+METODO PUT
+
+@test_put_3
+  Scenario: Validar que al actualizar un usuario, el servicio retorna una fecha
+    Given url "https://reqres.in/api/users/2"
+    And request {"name": "morpheus","job": "zion resident"}
+    When method put
+    Then match response contains {updatedAt : '#? _ >= "2025-06-22"'}
+  # Este test valida que la fecha de updatedAt sea mayor o igual a "2025-06-22"
+  # El #? _ trata de encontrar un valor que cumpla con la condición dada, tratando como array la respuesta, evaluando solo una parte de la misma.
+  # Es decir que dentro del arreglo exista un valor que cumpla con la condición de ser mayor o igual a "2025-06-22".
+  # Esto se usa para hacer contains parciales, ya que por defecto el contains evalua el objeto completo.
+
+
+  METODO PATCH
+
+@test_patch_2
+  Scenario: Validar que al actualizar un usuario, el servicio patch retorna un codigo 200
+    Given url "https://reqres.in/api/users/2"
+    And request {"name": "morpheus","job": "zion resident"}
+    When method patch
+    And def fecha_actual = karate.get('java.time.LocalDate.now().toString()')
+    * print fecha_actual
+    Then match response == {name:"morpheus", job:"zion resident", updatedAt : '#? _ >= "#(fecha_actual)"'}
+
+
+VALIDACIONES DE TIEMPO DE RESPUESTAS:
+
+@feature_times
+Feature: Pruebas validando los tiempos de respuesta de un servicio
+
+  Background:
+    * headers {'x-api-key' : 'reqres-free-v1'}
+
+  @test_times_1
+  Scenario: Validar que el tiempo de respueta del servicio sea menor a
+    Given url "https://reqres.in/api/users/2"
+    And request {"name": "morpheus","job": "zion resident"}
+    When method patch
+    And print "El tiempo de respuesta fue: " + responseTime
+    Then assert responseTime < 2000
+  # Validar que el tiempo de respuesta del servicio sea menor a 2 segundos, que son 2000 milisegundos
+
+La palabra reservada assert se utiliza para validar que una condicion se cumpla, en este caso, que el tiempo de respuesta sea menor a 2000 milisegundos.
+Otros ejemplos de assert sin responseTime:
+- assert response.status == 200
+- assert response.data[0].first_name == "George"
+- assert response.data[0].last_name == "Bluth"
+- assert response.data[0].id == 1
+
+Vendria a ser lo mismo que match response.status == 200,
+ pero con la diferencia que el assert no permite hacer validaciones mas complejas,
+ como por ejemplo, validar que un campo sea de un tipo de dato especifico, o que un campo contenga un valor especifico.

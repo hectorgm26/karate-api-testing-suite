@@ -1,0 +1,21 @@
+<configuration>
+
+    <!-- Define la configuracion de los logs -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss:SS} {%thread} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Configura el nivel de log para Karate -->
+    <logger name="com.intuit.karate" level="DEBUG"/>
+
+    <!-- Configura el nivel de log para Thymeleaf, usado para la construccion de reportes HTML -->
+    <logger name="org.thymeleaf" level="WARN"/>
+
+    <!-- Establece el nivel de log predeterminado para el root logger -->
+    <root level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>
