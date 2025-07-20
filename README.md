@@ -7,6 +7,7 @@ Este proyecto contiene una batería de pruebas automatizadas para APIs RESTful u
 ## 📚 Tabla de Contenidos
 
 - [Introducción](#introducción)
+- [Tecnologías Utilizadas](#tecnologías-utilizadas)
 - [Uso de Tags en Features](#uso-de-tags-en-features)
 - [Estructura de un Feature](#estructura-de-un-feature)
 - [Palabras Reservadas en Karate](#palabras-reservadas-en-karate)
@@ -29,6 +30,29 @@ Karate es un framework que permite escribir pruebas de APIs de forma sencilla ut
 - Validaciones de status, contenido y tiempos de respuesta.
 - Reutilización de datos y lógica.
 - Envío de requests y verificación de respuestas en múltiples métodos HTTP.
+
+---
+
+## 🛠️ Tecnologías Utilizadas
+
+### Framework Principal
+- **Karate Framework 1.4.0**: Framework de testing para APIs que combina la sintaxis Gherkin con capacidades avanzadas de testing REST/GraphQL.
+
+### Motor de Testing
+- **JUnit Jupiter API 5.13.1**: Framework de testing para Java que proporciona las anotaciones y funcionalidades básicas para ejecutar tests.
+- **JUnit Jupiter Engine 5.13.1**: Motor de ejecución que permite ejecutar tests JUnit 5 en tiempo de ejecución.
+
+### Sintaxis y Features
+- **Gherkin**: Lenguaje de dominio específico (DSL) para escribir casos de prueba en formato legible por humanos usando palabras clave como `Given`, `When`, `Then`.
+- **Cucumber (integrado en Karate)**: Framework BDD (Behavior-Driven Development) que permite ejecutar especificaciones escritas en Gherkin. Karate incluye su propia implementación de Cucumber optimizada para testing de APIs.
+
+### Generación de Reportes
+- **Thymeleaf (incluido en Karate)**: Motor de plantillas que Karate utiliza internamente para generar reportes HTML automáticos después de la ejecución de los tests, proporcionando visualización detallada de resultados, métricas y trazabilidad.
+
+### Características del Stack
+- **Integración nativa**: Todas las tecnologías están integradas dentro de Karate, eliminando la necesidad de configuraciones complejas.
+- **Reportes automáticos**: Generación automática de reportes HTML con métricas detalladas, tiempos de ejecución y resultados visuales.
+- **Sintaxis BDD**: Permite escribir tests en lenguaje natural comprensible por stakeholders técnicos y no técnicos.
 
 ---
 
