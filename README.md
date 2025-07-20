@@ -1,6 +1,6 @@
-# 🥋 Proyecto de Pruebas Automatizadas con Karate Framework
+# 🥋 Karate API Testing Suite
 
-Este repositorio contiene un proyecto personal orientado al aprendizaje, exploración y validación del framework de testing **Karate**, enfocado en pruebas automatizadas de APIs RESTful. Aquí se agrupan ejemplos prácticos, buenas prácticas, estructuras comunes y funcionalidades esenciales del framework.
+Este proyecto contiene una batería de pruebas automatizadas para APIs RESTful utilizando el **Karate Framework**, orientado a validar múltiples métodos HTTP, estructuras de respuesta, tiempos de respuesta y flujos comunes de prueba. Es ideal como base educativa, demostración de habilidades en automatización, o punto de partida para proyectos más grandes.
 
 ---
 
